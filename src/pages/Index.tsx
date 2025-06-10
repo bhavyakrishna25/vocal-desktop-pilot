@@ -148,13 +148,27 @@ const Index = () => {
   const handleWebNavigation = (command: string) => {
     const websiteMatch = command.match(/open\s+(.+?)\s+website/);
     if (websiteMatch) {
-      const siteName = websiteMatch[1];
+      const siteName = websiteMatch[1].toLowerCase();
       let url = `https://www.${siteName}.com`;
       
       // Handle common sites
       if (siteName.includes('google')) url = 'https://www.google.com';
       else if (siteName.includes('youtube')) url = 'https://www.youtube.com';
       else if (siteName.includes('github')) url = 'https://www.github.com';
+      else if (siteName.includes('facebook')) url = 'https://www.facebook.com';
+      else if (siteName.includes('twitter') || siteName.includes('x')) url = 'https://www.x.com';
+      else if (siteName.includes('instagram')) url = 'https://www.instagram.com';
+      else if (siteName.includes('linkedin')) url = 'https://www.linkedin.com';
+      else if (siteName.includes('amazon')) url = 'https://www.amazon.com';
+      else if (siteName.includes('netflix')) url = 'https://www.netflix.com';
+      else if (siteName.includes('wikipedia')) url = 'https://www.wikipedia.org';
+      else if (siteName.includes('stack overflow') || siteName.includes('stackoverflow')) url = 'https://stackoverflow.com';
+      else if (siteName.includes('reddit')) url = 'https://www.reddit.com';
+      else if (siteName.includes('tiktok')) url = 'https://www.tiktok.com';
+      else if (siteName.includes('discord')) url = 'https://discord.com';
+      else if (siteName.includes('twitch')) url = 'https://www.twitch.tv';
+      else if (siteName.includes('spotify')) url = 'https://open.spotify.com';
+      else if (siteName.includes('pinterest')) url = 'https://www.pinterest.com';
       
       window.open(url, '_blank');
       return `Opening ${siteName} website`;
@@ -272,10 +286,13 @@ const Index = () => {
             <CardContent>
               <p className="text-sm text-muted-foreground mb-2">Voice commands:</p>
               <ul className="text-xs space-y-1">
-                <li>"Open Google website"</li>
                 <li>"Open YouTube website"</li>
+                <li>"Open Facebook website"</li>
+                <li>"Open Instagram website"</li>
+                <li>"Open LinkedIn website"</li>
+                <li>"Open Netflix website"</li>
+                <li>"Open Reddit website"</li>
                 <li>"Search for cats"</li>
-                <li>"Open GitHub website"</li>
               </ul>
             </CardContent>
           </Card>
