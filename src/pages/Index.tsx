@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Mic, MicOff, Volume2, Calculator, Globe, History } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -24,19 +23,9 @@ const Index = () => {
   const [transcript, setTranscript] = useState('');
   const [commandHistory, setCommandHistory] = useState<VoiceCommand[]>([]);
   const [isSupported, setIsSupported] = useState(false);
-  const [apiKey, setApiKey] = useState('');
-  const [isProcessingAI, setIsProcessingAI] = useState(false);
   const recognitionRef = useRef<any>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const { toast } = useToast();
-
-  useEffect(() => {
-    // Load API key from localStorage
-    const savedApiKey = localStorage.getItem('openai-api-key');
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-    }
-  }, []);
 
   useEffect(() => {
     // Check for Web Speech API support
@@ -83,51 +72,7 @@ const Index = () => {
     }
   };
 
-  const handleAIQuestion = async (question: string): Promise<string> => {
-    if (!apiKey || apiKey.trim() === '') {
-      return "Please enter your OpenAI API key to ask questions.";
-    }
-
-    setIsProcessingAI(true);
-    try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a helpful voice assistant. Provide concise, clear answers suitable for text-to-speech. Keep responses under 100 words when possible.'
-            },
-            {
-              role: 'user',
-              content: question
-            }
-          ],
-          max_tokens: 150,
-          temperature: 0.7,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data.choices[0]?.message?.content || "I couldn't process your question.";
-    } catch (error) {
-      console.error('AI API Error:', error);
-      return "Sorry, I couldn't connect to the AI service. Please check your API key.";
-    } finally {
-      setIsProcessingAI(false);
-    }
-  };
-
-  const processVoiceCommand = async (command: string) => {
+  const processVoiceCommand = (command: string) => {
     const lowerCommand = command.toLowerCase();
     let response = "Command not recognized.";
 
@@ -155,10 +100,6 @@ const Index = () => {
     } else if (lowerCommand.includes('what date is it')) {
       response = `Today is ${new Date().toLocaleDateString()}`;
     }
-    // AI Questions - fallback for anything else
-    else {
-      response = await handleAIQuestion(command);
-    }
 
     // Add to history
     const newCommand: VoiceCommand = {
@@ -172,7 +113,7 @@ const Index = () => {
     speak(response);
 
     toast({
-      title: isProcessingAI ? "Processing AI Question" : "Command Processed",
+      title: "Command Processed",
       description: response,
     });
   };
@@ -284,27 +225,6 @@ const Index = () => {
           <h1 className="text-sm font-bold mb-1">Voice Assistant</h1>
         </div>
 
-        {/* API Key Input */}
-        <Card>
-          <CardContent className="p-3">
-            <Input
-              type="password"
-              placeholder="Enter OpenAI API key for AI questions"
-              value={apiKey}
-              onChange={(e) => {
-                const newApiKey = e.target.value.trim();
-                setApiKey(newApiKey);
-                if (newApiKey) {
-                  localStorage.setItem('openai-api-key', newApiKey);
-                } else {
-                  localStorage.removeItem('openai-api-key');
-                }
-              }}
-              className="text-xs h-8"
-            />
-          </CardContent>
-        </Card>
-
         {/* Voice Control Panel */}
         <Card className="compact-widget">
           <CardContent className="p-4 space-y-3">
@@ -314,13 +234,12 @@ const Index = () => {
                 variant={isListening ? "destructive" : "default"}
                 onClick={isListening ? stopListening : startListening}
                 className="w-20 h-20 rounded-full"
-                disabled={isProcessingAI}
               >
                 {isListening ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
               </Button>
             </div>
             <p className="text-center text-xs text-muted-foreground">
-              {isProcessingAI ? "Processing AI..." : isListening ? "Listening..." : "Click to start"}
+              {isListening ? "Listening..." : "Click to start"}
             </p>
             {transcript && (
               <div className="p-2 bg-muted rounded-md">
@@ -337,10 +256,9 @@ const Index = () => {
             <div className="grid grid-cols-2 gap-1 text-xs">
               <span>"14 plus 3"</span>
               <span>"Open YouTube"</span>
-              <span>"What is AI?"</span>
               <span>"What time is it"</span>
+              <span>"Search for cats"</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">Ask any question with AI key!</p>
           </CardContent>
         </Card>
 
