@@ -219,120 +219,56 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-4xl mx-auto space-y-6">
+    <div className="min-h-screen bg-background p-1">
+      <div className="w-72 mx-auto space-y-2">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-2">Voice Assistant</h1>
-          <p className="text-xl text-muted-foreground">Your web-based voice-controlled assistant</p>
+          <h1 className="text-sm font-bold mb-1">Voice Assistant</h1>
         </div>
 
         {/* Voice Control Panel */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Volume2 className="h-5 w-5" />
-              Voice Control
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <Card className="compact-widget">
+          <CardContent className="p-4 space-y-3">
             <div className="flex justify-center">
               <Button
                 size="lg"
                 variant={isListening ? "destructive" : "default"}
                 onClick={isListening ? stopListening : startListening}
-                className="w-32 h-32 rounded-full"
+                className="w-20 h-20 rounded-full"
               >
-                {isListening ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
+                {isListening ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
               </Button>
             </div>
-            <p className="text-center text-sm text-muted-foreground">
-              {isListening ? "Listening... Click to stop" : "Click to start listening"}
+            <p className="text-center text-xs text-muted-foreground">
+              {isListening ? "Listening..." : "Click to start"}
             </p>
             {transcript && (
-              <div className="p-3 bg-muted rounded-md">
-                <p className="text-sm"><strong>Last command:</strong> {transcript}</p>
+              <div className="p-2 bg-muted rounded-md">
+                <p className="text-xs"><strong>Last:</strong> {transcript}</p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calculator className="h-5 w-5" />
-                Calculator
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">Voice commands:</p>
-              <ul className="text-xs space-y-1">
-                <li>"14 plus 3"</li>
-                <li>"56 divided by 2"</li>
-                <li>"10 times 5"</li>
-                <li>"20 minus 8"</li>
-              </ul>
-            </CardContent>
-          </Card>
+        {/* Quick Commands */}
+        <Card>
+          <CardContent className="p-3">
+            <p className="text-xs text-muted-foreground mb-2">Quick commands:</p>
+            <div className="grid grid-cols-2 gap-1 text-xs">
+              <span>"14 plus 3"</span>
+              <span>"Open YouTube"</span>
+              <span>"What time is it"</span>
+              <span>"Search for cats"</span>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5" />
-                Web Navigation
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">Voice commands:</p>
-              <ul className="text-xs space-y-1">
-                <li>"Open YouTube website"</li>
-                <li>"Open Facebook website"</li>
-                <li>"Open Instagram website"</li>
-                <li>"Open LinkedIn website"</li>
-                <li>"Open Netflix website"</li>
-                <li>"Open Reddit website"</li>
-                <li>"Search for cats"</li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <History className="h-5 w-5" />
-                Other Commands
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">Voice commands:</p>
-              <ul className="text-xs space-y-1">
-                <li>"What time is it"</li>
-                <li>"What date is it"</li>
-                <li>"Open calculator"</li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Command History */}
+        {/* Latest Command */}
         {commandHistory.length > 0 && (
           <Card>
-            <CardHeader>
-              <CardTitle>Command History</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 max-h-60 overflow-y-auto">
-                {commandHistory.map((cmd, index) => (
-                  <div key={index} className="p-3 bg-muted rounded-md">
-                    <p className="text-sm font-medium">{cmd.command}</p>
-                    <p className="text-xs text-muted-foreground">{cmd.response}</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {cmd.timestamp.toLocaleTimeString()}
-                    </p>
-                  </div>
-                ))}
-              </div>
+            <CardContent className="p-3">
+              <p className="text-xs text-muted-foreground mb-1">Latest:</p>
+              <p className="text-xs font-medium truncate">{commandHistory[0].command}</p>
+              <p className="text-xs text-muted-foreground truncate">{commandHistory[0].response}</p>
             </CardContent>
           </Card>
         )}
