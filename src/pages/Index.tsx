@@ -84,7 +84,7 @@ const Index = () => {
   };
 
   const handleAIQuestion = async (question: string): Promise<string> => {
-    if (!apiKey) {
+    if (!apiKey || apiKey.trim() === '') {
       return "Please enter your OpenAI API key to ask questions.";
     }
 
@@ -292,8 +292,13 @@ const Index = () => {
               placeholder="Enter OpenAI API key for AI questions"
               value={apiKey}
               onChange={(e) => {
-                setApiKey(e.target.value);
-                localStorage.setItem('openai-api-key', e.target.value);
+                const newApiKey = e.target.value.trim();
+                setApiKey(newApiKey);
+                if (newApiKey) {
+                  localStorage.setItem('openai-api-key', newApiKey);
+                } else {
+                  localStorage.removeItem('openai-api-key');
+                }
               }}
               className="text-xs h-8"
             />
